@@ -4,9 +4,10 @@ import { supabase } from "@/lib/supabase";
 import deleteTodo from "@/server-actions/deleteTodo";
 
 export default async function Home() {
-	const { data: todos, error } = await supabase.from("todos").select("*");
-
-	console.log(todos);
+	const { data: todos, error } = await supabase
+		.from("todos")
+		.select("*")
+		.order("created_at", { ascending: false });
 
 	if (error) {
 		console.log("Error fetching databases", error);
