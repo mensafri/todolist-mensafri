@@ -1,8 +1,36 @@
+'use client'
+import { useState } from 'react';
 import addTodo from "@/server-actions/addTodo";
 
 export default function TodoForm() {
+    const [formData, setFormData] = useState({
+        title: '',
+        description: ''
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value
+        });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const formElement = e.target;
+        const formData = new FormData(formElement);
+        // Call the addTodo action
+        await addTodo(formData);
+        // Reset form inputs
+        setFormData({
+            title: '',
+            description: ''
+        });
+    };
+
     return (
-        <form action={addTodo} className="mb-6">
+        <form onSubmit={handleSubmit} className="mb-6">
             <div className="mb-4">
                 <label htmlFor="title" className="block text-white mb-2">
                     Title
@@ -11,6 +39,8 @@ export default function TodoForm() {
                     type="text"
                     id="title"
                     name="title"
+                    value={formData.title}
+                    onChange={handleChange}
                     className="shadow appearance-none border border-gray-600 bg-gray-700 rounded w-full py-2 px-3 text-white"
                     required
                 />
@@ -23,6 +53,8 @@ export default function TodoForm() {
                     type="text"
                     id="description"
                     name="description"
+                    value={formData.description}
+                    onChange={handleChange}
                     className="shadow appearance-none border border-gray-600 bg-gray-700 rounded w-full py-2 px-3 text-white"
                     required
                 />
@@ -33,5 +65,5 @@ export default function TodoForm() {
                 Add Todo
             </button>
         </form>
-    )
+    );
 }
