@@ -7,6 +7,7 @@ export default function TodoForm() {
         title: '',
         description: ''
     });
+    const [loading, setLoading] = useState(false); // State untuk menangani loading
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -20,13 +21,20 @@ export default function TodoForm() {
         e.preventDefault();
         const formElement = e.target;
         const formData = new FormData(formElement);
-        // Call the addTodo action
-        await addTodo(formData);
-        // Reset form inputs
-        setFormData({
-            title: '',
-            description: ''
-        });
+        setLoading(true); // Set loading menjadi true saat formulir disubmit
+        try {
+            // Panggil addTodo action
+            await addTodo(formData);
+            // Reset form inputs
+            setFormData({
+                title: '',
+                description: ''
+            });
+        } catch (error) {
+            console.error('Error adding todo:', error);
+        } finally {
+            setLoading(false); // Set loading kembali ke false setelah selesai
+        }
     };
 
     return (
@@ -61,8 +69,10 @@ export default function TodoForm() {
             </div>
             <button
                 type="submit"
-                className="bg-gray-600 hover:bg-gray-300 text-white hover:text-black font-bold py-2 px-4 rounded">
-                Add Todo
+                className="bg-gray-600 hover:bg-gray-300 text-white hover:text-black font-bold py-2 px-4 rounded"
+                disabled={loading} // Menonaktifkan tombol saat loading
+            >
+                {loading ? 'Adding...' : 'Add Todo'} {/* Teks tombol disesuaikan dengan status loading */}
             </button>
         </form>
     );
